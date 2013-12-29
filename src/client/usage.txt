@@ -1,0 +1,7 @@
+Usage:
+  networkMusicCLI (play|pause|next|prev|get)
+  networkMusicCLI --version | --help
+
+Options:
+  -h, --help     Show this screen
+  -v, --version  Display version and exit.
