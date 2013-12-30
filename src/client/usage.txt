@@ -1,7 +1,9 @@
 Usage:
-  networkMusicCLI (play|pause|next|prev|get)
+  networkMusicCLI (play|pause|next|prev|get) [--url=URL] [--port=PORT]
   networkMusicCLI --version | --help
 
 Options:
-  -h, --help     Show this screen
-  -v, --version  Display version and exit.
+  -u URL, --url=URL     The url of the server to connect to [default: localhost]
+  -p PORT, --port=PORT  The host port [default: 41900]
+  -h, --help            Show this screen
+  -v, --version         Display version and exit.

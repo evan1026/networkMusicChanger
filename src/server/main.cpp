@@ -2,6 +2,7 @@
 #include <Logger/Logger.hpp>
 #include <csignal>
 #include "../enums.hpp"
+#include "docopt.c"
 #include "main.hpp"
 
 using namespace std;
@@ -10,16 +11,28 @@ Logger          logger = Logger();
 sf::TcpListener listener;
 bool            running = true;
 
-int main(){
+int main(int argc, char* argv[]){
 
     signal(SIGINT, sigintCatcher);
 
-    if (listener.listen(41900) != sf::Socket::Done){
-        logger.log(Logger::LogType::Error, "Could not bind to port 41900");
+    DocoptArgs args = docopt(argc, argv, true, NMC_VERSION);
+
+    //Since docopt is sucking at defaults
+    if (args.port == NULL)
+        args.port = (char *) "41900"; //It's supposed to come out as a string, so might as well set the default as a string.
+
+    unsigned short port;
+    if (!(stringstream(args.port) >> port)){
+        logger.log(Logger::LogType::Error, "Invalid port number.");
+        return 2;
+    }
+
+    if (listener.listen(port) != sf::Socket::Done){
+        logger.log(Logger::LogType::Error, "Could not bind to port ", port);
         return 1;
     }
 
-    logger.log("Music control server running on port 41900.");
+    logger.log("Music control server running on port ", port, ".");
 
     while (running){
         sf::TcpSocket client;

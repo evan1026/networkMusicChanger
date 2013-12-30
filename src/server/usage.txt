@@ -1,0 +1,8 @@
+Usage:
+  networkMusicServer [--port=PORT]
+  networkMusicServer --version | --help
+
+Options:
+  -p PORT, --port=PORT  The host port [default: 41900]
+  -h, --help            Show this screen
+  -v, --version         Display version and exit.

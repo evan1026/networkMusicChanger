@@ -11,18 +11,11 @@
 
 
 typedef struct {
-    /* commands */
-    int get;
-    int next;
-    int pause;
-    int play;
-    int prev;
     /* options without arguments */
     int help;
     int version;
     /* options with arguments */
     char *port;
-    char *url;
     /* special */
     const char *usage_pattern;
     const char *help_message;
@@ -30,11 +23,10 @@ typedef struct {
 
 const char help_message[] =
 "Usage:\n"
-"  networkMusicCLI (play|pause|next|prev|get) [--url=URL] [--port=PORT]\n"
-"  networkMusicCLI --version | --help\n"
+"  networkMusicServer [--port=PORT]\n"
+"  networkMusicServer --version | --help\n"
 "\n"
 "Options:\n"
-"  -u URL, --url=URL     The url of the server to connect to [default: localhost]\n"
 "  -p PORT, --port=PORT  The host port [default: 41900]\n"
 "  -h, --help            Show this screen\n"
 "  -v, --version         Display version and exit.\n"
@@ -42,8 +34,8 @@ const char help_message[] =
 
 const char usage_pattern[] =
 "Usage:\n"
-"  networkMusicCLI (play|pause|next|prev|get) [--url=URL] [--port=PORT]\n"
-"  networkMusicCLI --version | --help";
+"  networkMusicServer [--port=PORT]\n"
+"  networkMusicServer --version | --help";
 
 typedef struct {
     const char *name;
@@ -264,24 +256,11 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
             args->version = option->value;
         } else if (!strcmp(option->olong, "--port")) {
             args->port = option->argument;
-        } else if (!strcmp(option->olong, "--url")) {
-            args->url = option->argument;
         }
     }
     /* commands */
     for (i=0; i < elements->n_commands; i++) {
         command = &elements->commands[i];
-        if (!strcmp(command->name, "get")) {
-            args->get = command->value;
-        } else if (!strcmp(command->name, "next")) {
-            args->next = command->value;
-        } else if (!strcmp(command->name, "pause")) {
-            args->pause = command->value;
-        } else if (!strcmp(command->name, "play")) {
-            args->play = command->value;
-        } else if (!strcmp(command->name, "prev")) {
-            args->prev = command->value;
-        }
     }
     /* arguments */
     for (i=0; i < elements->n_arguments; i++) {
@@ -297,26 +276,20 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, 0, 0, 0, 0, (char*) "41900", (char*) "localhost",
+        0, 0, (char*) "41900",
         usage_pattern, help_message
     };
     Tokens ts;
     Command commands[] = {
-        {"get", 0},
-        {"next", 0},
-        {"pause", 0},
-        {"play", 0},
-        {"prev", 0}
     };
     Argument arguments[] = {
     };
     Option options[] = {
         {"-h", "--help", 0, 0, NULL},
         {"-v", "--version", 0, 0, NULL},
-        {"-p", "--port", 1, 0, NULL},
-        {"-u", "--url", 1, 0, NULL}
+        {"-p", "--port", 1, 0, NULL}
     };
-    Elements elements = {5, 0, 4, commands, arguments, options};
+    Elements elements = {0, 0, 3, commands, arguments, options};
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))
